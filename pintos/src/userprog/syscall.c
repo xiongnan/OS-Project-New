@@ -281,9 +281,7 @@ read (int fd, void *buffer, unsigned size)
 				pg_round_down (buffer_tmp));
 	  if (spte != NULL && !spte->is_loaded)
 	    load_page (spte);
-    //else if (spte == NULL && buffer_tmp >= (esp - 32))
-	  //  grow_stack (buffer_tmp);
-	  else
+    else
 	    exit (-1);
 	}
       

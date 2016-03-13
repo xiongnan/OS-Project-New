@@ -9,9 +9,6 @@
 #include "lib/kernel/hash.h"
 #include "filesys/file.h"
 
-/* *****************************************************
- * This file is about supplemental page table management
- *******************************************************/
 
 /* Data Definition */
 
@@ -93,7 +90,5 @@ void free_suppl_pt (struct hash *);
 /* Load page data to the page defined in struct suppl_pte. */
 bool load_page (struct suppl_pte *);
 
-/* Grow stack by one page where the given address points to */
-//void grow_stack (void *);
 
 #endif /* vm/page.h */
