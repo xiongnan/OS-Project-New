@@ -118,7 +118,7 @@ main (void)
 #ifdef USERPROG
   exception_init ();
   syscall_init ();
-  vm_frame_init ();
+  vm_frames_init ();
   vm_page_init ();
 #endif
 

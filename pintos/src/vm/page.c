@@ -7,7 +7,7 @@
 #include "filesys/file.h"
 #include "string.h"
 #include "userprog/syscall.h"
-#include "vm/swap.h"
+//#include "vm/swap.h"
 
 static bool load_page_file (struct suppl_pte *);
 static bool load_page_swap (struct suppl_pte *);
@@ -69,10 +69,10 @@ load_page (struct suppl_pte *spte)
       success = load_page_file (spte);
       break;
     case MMF:
-    //case MMF | SWAP:
+    case MMF | SWAP:
       success = load_page_mmf (spte);
       break;
-    //case FILE | SWAP:
+    case FILE | SWAP:
     case SWAP:
       success = load_page_swap (spte);
       break;
