@@ -94,6 +94,6 @@ void free_suppl_pt (struct hash *);
 bool load_page (struct suppl_pte *);
 
 /* Grow stack by one page where the given address points to */
-void grow_stack (void *);
+//void grow_stack (void *);
 
 #endif /* vm/page.h */

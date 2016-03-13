@@ -302,22 +302,22 @@ void write_page_back_to_file_wo_lock (struct suppl_pte *spte)
 
 
 /* Grow stack by one page where the given address points to */
-void grow_stack (void *uvaddr)
-{
-  void *spage;
-  struct thread *t = thread_current ();
-  spage = vm_allocate_frame (PAL_USER | PAL_ZERO);
-  if (spage == NULL)
-    return;
-  else
-    {
-      /* Add the page to the process's address space. */
-      if (!pagedir_set_page (t->pagedir, pg_round_down (uvaddr), spage, true))
-	{
-	  vm_free_frame (spage); 
-	}
-    }
-}
+//void grow_stack (void *uvaddr)
+//{
+//  void *spage;
+//  struct thread *t = thread_current ();
+//  spage = vm_allocate_frame (PAL_USER | PAL_ZERO);
+//  if (spage == NULL)
+//    return;
+//  else
+//    {
+//      /* Add the page to the process's address space. */
+//      if (!pagedir_set_page (t->pagedir, pg_round_down (uvaddr), spage, true))
+//	{
+//	  vm_free_frame (spage); 
+//	}
+//    }
+//}
 
 
 

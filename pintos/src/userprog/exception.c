@@ -165,9 +165,9 @@ page_fault (struct intr_frame *f)
   spte = get_suppl_pte (&cur->suppl_page_table, pg_round_down(fault_addr));
   if (spte != NULL && !spte->is_loaded)
     load_page (spte);
-  else if (spte == NULL && fault_addr >= (f->esp - 32) && 
-	   (PHYS_BASE - pg_round_down (fault_addr)) <= STACK_SIZE)
-    grow_stack (fault_addr);
+  //else if (spte == NULL && fault_addr >= (f->esp - 32) &&
+	//   (PHYS_BASE - pg_round_down (fault_addr)) <= STACK_SIZE)
+  //  grow_stack (fault_addr);
   else
     {
       if (!pagedir_get_page (cur->pagedir, fault_addr))
