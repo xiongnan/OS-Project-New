@@ -8,6 +8,8 @@
 #include "userprog/pagedir.h"
 #include "vm/page.h"
 #include "threads/pte.h"
+#include <bitmap.h>
+#include "devices/block.h"
 //#include "vm/swap.h"
 
 #include "vm/frame.h"
