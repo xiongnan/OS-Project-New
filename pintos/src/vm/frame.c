@@ -48,16 +48,9 @@ static size_t SECTORS_PER_PAGE = PGSIZE / BLOCK_SECTOR_SIZE;
 static size_t swap_size_in_page (void);
 
 
-
-
-/* init the frame table and necessary data structure */
 void
-vm_frames_init ()
+vm_swap_init ()
 {
-  list_init (&vm_frames);
-  lock_init (&vm_lock);
-  lock_init (&eviction_lock);
-  
   /* init the swap device */
   swap_device = block_get_role (BLOCK_SWAP);
   if (swap_device == NULL)
@@ -70,8 +63,20 @@ vm_frames_init ()
   
   /* initialize all bits to be true */
   bitmap_set_all (swap_map, true);
+}
+
+/* init the frame table and necessary data structure */
+void
+vm_frames_init ()
+{
+  list_init (&vm_frames);
+  lock_init (&vm_lock);
+  lock_init (&eviction_lock);
 
 }
+
+
+
 
 /* allocate a page from USER_POOL, and add an entry to frame table */
 void *

@@ -136,7 +136,7 @@ main (void)
 
 #ifdef VM
   locate_block_devices ();
-  //vm_swap_init ();
+  vm_swap_init ();
 #endif
 
   printf ("Boot complete.\n");
