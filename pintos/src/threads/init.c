@@ -40,7 +40,7 @@
 #include "filesys/fsutil.h"
 #endif
 #ifdef VM
-#include "vm/swap.h"
+#include "vm/frame.h"
 #endif
 
 /* Page directory with kernel mappings only. */
