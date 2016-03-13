@@ -10,6 +10,11 @@
 #include "threads/pte.h"
 #include <bitmap.h>
 #include "devices/block.h"
+#include "threads/vaddr.h"
+#include "threads/synch.h"
+#include <stdbool.h>
+#include <stddef.h>
+#include <inttypes.h>
 //#include "vm/swap.h"
 
 #include "vm/frame.h"
