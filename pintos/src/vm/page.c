@@ -64,18 +64,16 @@ load_page (struct suppl_pte *spte)
 {
   bool success = false;
   switch (spte->type)
-  {
+    {
     case FILE:
       success = load_page_file (spte);
       break;
-    //case  MMF:
     case MMF:
-    //case SWAP:
+    case MMF | SWAP:
       success = load_page_mmf (spte);
       break;
-    //case FILE:
+    case FILE | SWAP:
     case SWAP:
-   // case SWAP:
       success = load_page_swap (spte);
       break;
     default:
