@@ -80,7 +80,7 @@ static bool
 load_page_file (struct supply_pte *spte)
 {
   
-  file_seek (spte->data.file_page.file, spte->data.file_page.ofs);
+  file_seek (spte->file.file, spte->file.ofs);
 
   /* Get a page of memory. */
   uint8_t *kpage = vm_allocate_frame (PAL_USER);
@@ -88,20 +88,20 @@ load_page_file (struct supply_pte *spte)
     return false;
   
   /* Load this page. */
-  if (file_read (spte->data.file_page.file, kpage,
-		 spte->data.file_page.read_bytes)
+  if (file_read (spte->file.file, kpage,
+		 spte->file.read_bytes)
       
-      != (int) spte->data.file_page.read_bytes)
+      != (int) spte->file.read_bytes)
     {
       vm_free_frame (kpage);
       return false; 
     }
-  memset (kpage + spte->data.file_page.read_bytes, 0,
-	  spte->data.file_page.zero_bytes);
+  memset (kpage + spte->file.read_bytes, 0,
+	  spte->file.zero_bytes);
   
   /* Add the page to the process's address space. */
   if (!pagedir_set_page (thread_current ()->pagedir, spte->uvaddr, kpage,
-			 spte->data.file_page.writable))
+			 spte->file.writable))
     {
       vm_free_frame (kpage);
       return false; 
@@ -117,7 +117,7 @@ static bool
 load_page_mmf (struct supply_pte *spte)
 {
 
-  file_seek (spte->data.mmf_page.file, spte->data.mmf_page.ofs);
+  file_seek (spte->mmf.file, spte->mmf.ofs);
 
   /* Get a page of memory. */
   uint8_t *kpage = vm_allocate_frame (PAL_USER);
@@ -125,15 +125,15 @@ load_page_mmf (struct supply_pte *spte)
     return false;
 
   /* Load this page. */
-  if (file_read (spte->data.mmf_page.file, kpage,
-		 spte->data.mmf_page.read_bytes)
-      != (int) spte->data.mmf_page.read_bytes)
+  if (file_read (spte->mmf.file, kpage,
+		 spte->mmf.read_bytes)
+      != (int) spte->mmf.read_bytes)
     {
       vm_free_frame (kpage);
       return false; 
     }
-  memset (kpage + spte->data.mmf_page.read_bytes, 0,
-	  PGSIZE - spte->data.mmf_page.read_bytes);
+  memset (kpage + spte->mmf.read_bytes, 0,
+	  PGSIZE - spte->mmf.read_bytes);
 
   /* Add the page to the process's address space. */
   if (!pagedir_set_page (thread_current ()->pagedir, spte->uvaddr, kpage, true))
@@ -236,11 +236,11 @@ supply_pt_insert_file (struct file *file, off_t ofs, uint8_t *upage,
   
   spte->uvaddr = upage;
   spte->type = FILE;
-  spte->data.file_page.file = file;
-  spte->data.file_page.ofs = ofs;
-  spte->data.file_page.read_bytes = read_bytes;
-  spte->data.file_page.zero_bytes = zero_bytes;
-  spte->data.file_page.writable = writable;
+  spte->file.file = file;
+  spte->file.ofs = ofs;
+  spte->file.read_bytes = read_bytes;
+  spte->file.zero_bytes = zero_bytes;
+  spte->file.writable = writable;
   spte->is_loaded = false;
       
   result = hash_insert (&cur->supply_page_table, &spte->elem);
@@ -266,9 +266,9 @@ supply_pt_insert_mmf (struct file *file, off_t ofs, uint8_t *upage,
   
   spte->uvaddr = upage;
   spte->type = MMF;
-  spte->data.mmf_page.file = file;
-  spte->data.mmf_page.ofs = ofs;
-  spte->data.mmf_page.read_bytes = read_bytes;
+  spte->mmf.file = file;
+  spte->mmf.ofs = ofs;
+  spte->mmf.read_bytes = read_bytes;
   spte->is_loaded = false;
       
   result = hash_insert (&cur->supply_page_table, &spte->elem);
@@ -284,10 +284,10 @@ void write_page_back_to_file_wo_lock (struct supply_pte *spte)
 {
   if (spte->type == MMF)
     {
-      file_seek (spte->data.mmf_page.file, spte->data.mmf_page.ofs);
-      file_write (spte->data.mmf_page.file, 
+      file_seek (spte->mmf.file, spte->mmf.ofs);
+      file_write (spte->mmf.file,
                   spte->uvaddr,
-                  spte->data.mmf_page.read_bytes);
+                  spte->mmf.read_bytes);
     }
 }
 
