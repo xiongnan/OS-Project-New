@@ -11,7 +11,7 @@
 
 #define SWAP = 1
 #define FILE = 2
-#Define MMF = 3
+#define MMF = 3
 
 /* Data Definition */
 
