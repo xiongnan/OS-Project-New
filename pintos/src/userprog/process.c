@@ -115,7 +115,7 @@ start_process (void *file_name_)
   struct thread *parent;
 
   /* init supplemental hash page table */
-  hash_init (&cur->suppl_page_table, suppl_pt_hash, suppl_pt_less, NULL);
+  hash_init (&cur->supply_page_table, supply_pt_hash, supply_pt_less, NULL);
   
   /* init memory mapped files table */
   hash_init (&cur->mmfiles, mmfile_hash, mmfile_less, NULL);
@@ -257,7 +257,7 @@ process_exit (void)
   close_file_by_owner (cur->tid);  
 
   /* free the supplemental page table */
-  free_suppl_pt (&cur->suppl_page_table);  
+  free_supply_pt (&cur->supply_page_table);
 
   parent = thread_get_by_id (cur->parent_id);
   if (parent != NULL)
@@ -550,7 +550,7 @@ load_segment_lazily (struct file *file, off_t ofs, uint8_t *upage,
       size_t page_zero_bytes = PGSIZE - page_read_bytes;
 
       /* Add an file suuplemental page entry to supplemental page table */ 
-      if (!suppl_pt_insert_file (file, ofs, upage, page_read_bytes,
+      if (!supply_pt_insert_file (file, ofs, upage, page_read_bytes,
                                  page_zero_bytes, writable))
 	return false;
 
@@ -787,7 +787,7 @@ mapid_t mmfiles_insert (void *addr, struct file* file, int32_t len)
   while (len > 0)
     {
       size_t read_bytes = len < PGSIZE ? len : PGSIZE; 
-      if (!suppl_pt_insert_mmf (file, offset, addr, read_bytes))
+      if (!supply_pt_insert_mmf (file, offset, addr, read_bytes))
 	return -1;
 
       offset += PGSIZE;
@@ -831,8 +831,8 @@ mmfiles_free_entry (struct mmfile* mmf_ptr)
   struct thread *t = thread_current ();
   struct hash_elem *he;
   int pg_cnt;
-  struct suppl_pte spte;
-  struct suppl_pte *spte_ptr;
+  struct supply_pte spte;
+  struct supply_pte *spte_ptr;
   int offset;
 
   pg_cnt = mmf_ptr->pg_cnt;
@@ -842,12 +842,12 @@ mmfiles_free_entry (struct mmfile* mmf_ptr)
       /* Get supplemental page table entry for each page */
       /* check whether the page is dirty */
       /* if dirty, write back to the file*/
-      /* free the struct suppl_pte for each entry*/
+      /* free the struct supply_pte for each entry*/
       spte.uvaddr = mmf_ptr->start_addr + offset;
-      he = hash_delete (&t->suppl_page_table, &spte.elem);
+      he = hash_delete (&t->supply_page_table, &spte.elem);
       if (he != NULL)
 	{
-	  spte_ptr = hash_entry (he, struct suppl_pte, elem);
+	  spte_ptr = hash_entry (he, struct supply_pte, elem);
 	  if (spte_ptr->is_loaded
 	      && pagedir_is_dirty (t->pagedir, spte_ptr->uvaddr))
 	    {

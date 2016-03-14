@@ -9,12 +9,12 @@
 #include "userprog/syscall.h"
 //#include "vm/swap.h"
 
-static bool load_page_file (struct suppl_pte *);
-static bool load_page_swap (struct suppl_pte *);
-static bool load_page_mmf (struct suppl_pte *);
-static void free_suppl_pte (struct hash_elem *, void * UNUSED);
+static bool load_page_file (struct supply_pte *);
+static bool load_page_swap (struct supply_pte *);
+static bool load_page_mmf (struct supply_pte *);
+static void free_supply_pte (struct hash_elem *, void * UNUSED);
 
-/* init the supplemental page table and neccessary data structure */
+/* init the supplyemental page table and neccessary data structure */
 void 
 vm_page_init (void)
 {
@@ -23,44 +23,44 @@ vm_page_init (void)
 
 /* Functionality required by hash table*/
 unsigned
-suppl_pt_hash (const struct hash_elem *he, void *aux UNUSED)
+supply_pt_hash (const struct hash_elem *he, void *aux UNUSED)
 {
-  const struct suppl_pte *vspte;
-  vspte = hash_entry (he, struct suppl_pte, elem);
+  const struct supply_pte *vspte;
+  vspte = hash_entry (he, struct supply_pte, elem);
   return hash_bytes (&vspte->uvaddr, sizeof vspte->uvaddr);
 }
 
 /* Functionality required by hash table*/
 bool
-suppl_pt_less (const struct hash_elem *hea,
+supply_pt_less (const struct hash_elem *hea,
                const struct hash_elem *heb,
 	       void *aux UNUSED)
 {
-  const struct suppl_pte *vsptea;
-  const struct suppl_pte *vspteb;
+  const struct supply_pte *vsptea;
+  const struct supply_pte *vspteb;
  
-  vsptea = hash_entry (hea, struct suppl_pte, elem);
-  vspteb = hash_entry (heb, struct suppl_pte, elem);
+  vsptea = hash_entry (hea, struct supply_pte, elem);
+  vspteb = hash_entry (heb, struct supply_pte, elem);
 
   return (vsptea->uvaddr - vspteb->uvaddr) < 0;
 }
 
 /* Given hash table and its key which is a user virtual address, find the
  * corresponding hash element*/
-struct suppl_pte *
-get_suppl_pte (struct hash *ht, void *uvaddr)
+struct supply_pte *
+get_supply_pte (struct hash *ht, void *uvaddr)
 {
-  struct suppl_pte spte;
+  struct supply_pte spte;
   struct hash_elem *e;
 
   spte.uvaddr = uvaddr;
   e = hash_find (ht, &spte.elem);
-  return e != NULL ? hash_entry (e, struct suppl_pte, elem) : NULL;
+  return e != NULL ? hash_entry (e, struct supply_pte, elem) : NULL;
 }
 
-/* Load page data to the page defined in struct suppl_pte. */
+/* Load page data to the page defined in struct supply_pte. */
 bool
-load_page (struct suppl_pte *spte)
+load_page (struct supply_pte *spte)
 {
   bool success = false;
   int type = spte->type;
@@ -74,10 +74,10 @@ load_page (struct suppl_pte *spte)
   return success;
 }
 
-/* Load page data to the page defined in struct suppl_pte from the given file
-   in struct suppl_pte */
+/* Load page data to the page defined in struct supply_pte from the given file
+   in struct supply_pte */
 static bool
-load_page_file (struct suppl_pte *spte)
+load_page_file (struct supply_pte *spte)
 {
   
   file_seek (spte->data.file_page.file, spte->data.file_page.ofs);
@@ -112,9 +112,9 @@ load_page_file (struct suppl_pte *spte)
 }
 
 
-/* Load a mmf page whose details are defined in struct suppl_pte */
+/* Load a mmf page whose details are defined in struct supply_pte */
 static bool
-load_page_mmf (struct suppl_pte *spte)
+load_page_mmf (struct supply_pte *spte)
 {
 
   file_seek (spte->data.mmf_page.file, spte->data.mmf_page.ofs);
@@ -149,9 +149,9 @@ load_page_mmf (struct suppl_pte *spte)
   return true;
 }
 
-/* Load a zero page whose details are defined in struct suppl_pte */
+/* Load a zero page whose details are defined in struct supply_pte */
 static bool
-load_page_swap (struct suppl_pte *spte)
+load_page_swap (struct supply_pte *spte)
 {
   
   /* Get a page of memory. */
@@ -172,8 +172,8 @@ load_page_swap (struct suppl_pte *spte)
 
   if (spte->type == SWAP)
     {
-      /* After swap in, remove the corresponding entry in suppl page table */
-      hash_delete (&thread_current ()->suppl_page_table, &spte->elem);
+      /* After swap in, remove the corresponding entry in supply page table */
+      hash_delete (&thread_current ()->supply_page_table, &spte->elem);
     }
   if (spte->type == (FILE | SWAP))
     {
@@ -184,28 +184,28 @@ load_page_swap (struct suppl_pte *spte)
   return true;
 }
 
-/* Free the given supplimental page table, which is a hash table */
-void free_suppl_pt (struct hash *suppl_pt) 
+/* Free the given supplyimental page table, which is a hash table */
+void free_supply_pt (struct hash *supply_pt) 
 {
-  hash_destroy (suppl_pt, free_suppl_pte);
+  hash_destroy (supply_pt, free_supply_pte);
 }
 
-/* Free supplemental page entry represented by the given hash element in
+/* Free supplyemental page entry represented by the given hash element in
    hash table */
 static void
-free_suppl_pte (struct hash_elem *e, void *aux UNUSED)
+free_supply_pte (struct hash_elem *e, void *aux UNUSED)
 {
-  struct suppl_pte *spte;
-  spte = hash_entry (e, struct suppl_pte, elem);
+  struct supply_pte *spte;
+  spte = hash_entry (e, struct supply_pte, elem);
   if (spte->type & SWAP)
     vm_clear_swap_slot (spte->swap_slot_idx);
 
   free (spte);
 }
 
-/* insert the given suppl pte */
+/* insert the given supply pte */
 bool 
-insert_suppl_pte (struct hash *spt, struct suppl_pte *spte)
+insert_supply_pte (struct hash *spt, struct supply_pte *spte)
 {
   struct hash_elem *result;
 
@@ -220,12 +220,12 @@ insert_suppl_pte (struct hash *spt, struct suppl_pte *spte)
 }
 
 
-/* Add an file suplemental page entry to supplemental page table */
+/* Add an file suplemental page entry to supplyemental page table */
 bool
-suppl_pt_insert_file (struct file *file, off_t ofs, uint8_t *upage, 
+supply_pt_insert_file (struct file *file, off_t ofs, uint8_t *upage, 
 		      uint32_t read_bytes, uint32_t zero_bytes, bool writable)
 {
-  struct suppl_pte *spte; 
+  struct supply_pte *spte; 
   struct hash_elem *result;
   struct thread *cur = thread_current ();
 
@@ -243,19 +243,19 @@ suppl_pt_insert_file (struct file *file, off_t ofs, uint8_t *upage,
   spte->data.file_page.writable = writable;
   spte->is_loaded = false;
       
-  result = hash_insert (&cur->suppl_page_table, &spte->elem);
+  result = hash_insert (&cur->supply_page_table, &spte->elem);
   if (result != NULL)
     return false;
 
   return true;
 }
 
-/* Add an file suplemental page entry to supplemental page table */
+/* Add an file suplemental page entry to supplyemental page table */
 bool
-suppl_pt_insert_mmf (struct file *file, off_t ofs, uint8_t *upage, 
+supply_pt_insert_mmf (struct file *file, off_t ofs, uint8_t *upage, 
 		      uint32_t read_bytes)
 {
-  struct suppl_pte *spte; 
+  struct supply_pte *spte; 
   struct hash_elem *result;
   struct thread *cur = thread_current ();
 
@@ -271,16 +271,16 @@ suppl_pt_insert_mmf (struct file *file, off_t ofs, uint8_t *upage,
   spte->data.mmf_page.read_bytes = read_bytes;
   spte->is_loaded = false;
       
-  result = hash_insert (&cur->suppl_page_table, &spte->elem);
+  result = hash_insert (&cur->supply_page_table, &spte->elem);
   if (result != NULL)
     return false;
 
   return true;
 }
 
-/* Given a suppl_pte struct spte, write data at address spte->uvaddr to
+/* Given a supply_pte struct spte, write data at address spte->uvaddr to
  * file. It is required if a page is dirty */
-void write_page_back_to_file_wo_lock (struct suppl_pte *spte)
+void write_page_back_to_file_wo_lock (struct supply_pte *spte)
 {
   if (spte->type == MMF)
     {

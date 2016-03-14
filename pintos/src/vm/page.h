@@ -13,18 +13,9 @@
 #define FILE  2
 #define MMF 3
 
-/* Data Definition */
 
-/* The lowest bit indicate whether the page has been swapped out */
-//enum suppl_pte_type
+//union spte_data
 //{
-//  SWAP = 001,
-//  FILE = 002,
-//  MMF  = 004
-//};
-
-union suppl_pte_data
-{
   struct
   {
     struct file * file;
@@ -40,14 +31,17 @@ union suppl_pte_data
     off_t ofs;
     uint32_t read_bytes;
   } mmf_page;
-};
+//};
 
 /* supplemental page table entry */
-struct suppl_pte
+struct supply_pte
 {
   void *uvaddr;   //user virtual address as the unique identifier of a page
   int type; // 1 -> SWAP, 2 -> FILE, 3 -> MMF
-  union suppl_pte_data data;
+  //union supply_pte_data data;
+  struct file_page;
+  struct mmf_page;
+  
   bool is_loaded;
 
   /* reserved for possible swapping */
@@ -60,38 +54,38 @@ struct suppl_pte
 /* Initialization of the supplemental page table management provided */
 void vm_page_init(void);
 
-/* Functionalities required by hash table, which is supplemental_pt */
-unsigned suppl_pt_hash (const struct hash_elem *, void * UNUSED);
-bool suppl_pt_less (const struct hash_elem *, 
+/* Functionalities required by hash table, which is supplyemental_pt */
+unsigned supply_pt_hash (const struct hash_elem *, void * UNUSED);
+bool supply_pt_less (const struct hash_elem *, 
 		    const struct hash_elem *,
 		    void * UNUSED);
 
 
-/* insert the given suppl pte */
-bool insert_suppl_pte (struct hash *, struct suppl_pte *);
+/* insert the given supply pte */
+bool insert_supply_pte (struct hash *, struct supply_pte *);
 
 /* Add a file supplemental page table entry to the current thread's
  * supplemental page table */
-bool suppl_pt_insert_file ( struct file *, off_t, uint8_t *, 
+bool supply_pt_insert_file ( struct file *, off_t, uint8_t *, 
 			    uint32_t, uint32_t, bool);
 
-/* Add a memory-mapped-file supplemental page table entry to the current
+/* Add a memory-mapped-file supplyemental page table entry to the current
  * thread's supplemental page table */
-bool suppl_pt_insert_mmf (struct file *, off_t, uint8_t *, uint32_t);
+bool supply_pt_insert_mmf (struct file *, off_t, uint8_t *, uint32_t);
 
 /* Given hash table and its key which is a user virtual address, find the
  * corresponding hash element*/
-struct suppl_pte *get_suppl_pte (struct hash *, void *);
+struct supply_pte *get_supply_pte (struct hash *, void *);
 
-/* Given a suppl_pte struct spte, write data at address spte->uvaddr to
+/* Given a supply_pte struct spte, write data at address spte->uvaddr to
  * file. It is required if a page is dirty */
-void write_page_back_to_file_wo_lock (struct suppl_pte *);
+void write_page_back_to_file_wo_lock (struct supply_pte *);
 
-/* Free the given supplimental page table, which is a hash table */
-void free_suppl_pt (struct hash *);
+/* Free the given supplemental page table, which is a hash table */
+void free_supply_pt (struct hash *);
 
-/* Load page data to the page defined in struct suppl_pte. */
-bool load_page (struct suppl_pte *);
+/* Load page data to the page defined in struct supply_pte. */
+bool load_page (struct supply_pte *);
 
 
 #endif /* vm/page.h */

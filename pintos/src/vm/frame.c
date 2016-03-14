@@ -209,22 +209,22 @@ static bool
 save_evicted_frame (struct vm_frame *vf)
 {
   struct thread *t;
-  struct suppl_pte *spte;
+  struct supply_pte *spte;
 
-  /* Get corresponding thread vm_frame->tid's suppl page table */
+  /* Get corresponding thread vm_frame->tid's supply page table */
   t = thread_get_by_id (vf->tid);
 
-  /* Get suppl page table entry corresponding to vm_frame->uva */
-  spte = get_suppl_pte (&t->suppl_page_table, vf->uva);
+  /* Get supply page table entry corresponding to vm_frame->uva */
+  spte = get_supply_pte (&t->supply_page_table, vf->uva);
 
-  /* if no suppl page table entry is found, create one and insert it
-     into suppl page table */
+  /* if no supply page table entry is found, create one and insert it
+     into supply page table */
   if (spte == NULL)
     {
       spte = calloc(1, sizeof *spte);
       spte->uvaddr = vf->uva;
       spte->type = SWAP;
-      if (!insert_suppl_pte (&t->suppl_page_table, spte))
+      if (!insert_supply_pte (&t->supply_page_table, spte))
         return false;
     }
 

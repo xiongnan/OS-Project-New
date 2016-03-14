@@ -276,8 +276,8 @@ read (int fd, void *buffer, unsigned size)
 
       if (pagedir_get_page (t->pagedir, buffer_tmp) == NULL)   
 	{ 
-	  struct suppl_pte *spte;
-	  spte = get_suppl_pte (&t->suppl_page_table, 
+	  struct supply_pte *spte;
+	  spte = get_supply_pte (&t->supply_page_table,
 				pg_round_down (buffer_tmp));
 	  if (spte != NULL && !spte->is_loaded)
 	    load_page (spte);
@@ -453,7 +453,7 @@ mmap (int fd, void *addr)
   offset = 0;
   while (offset < len)
     {
-      if (get_suppl_pte (&t->suppl_page_table, addr + offset))
+      if (get_supply_pte (&t->supply_page_table, addr + offset))
 	return -1;
       
       if (pagedir_get_page (t->pagedir, addr + offset))

@@ -131,7 +131,7 @@ page_fault (struct intr_frame *f)
   bool write;        /* True: access was write, false: access was read. */
   bool user;         /* True: access by user, false: access by kernel. */
   void *fault_addr;  /* Fault address. */
-  struct suppl_pte *spte;
+  struct supply_pte *spte;
   struct thread *cur = thread_current ();
 
   /* Obtain faulting address, the virtual address that was
@@ -162,7 +162,7 @@ page_fault (struct intr_frame *f)
   if (fault_addr == NULL || !not_present || !is_user_vaddr(fault_addr))
     exit (-1);
   
-  spte = get_suppl_pte (&cur->suppl_page_table, pg_round_down(fault_addr));
+  spte = get_supply_pte (&cur->supply_page_table, pg_round_down(fault_addr));
   if (spte != NULL && !spte->is_loaded)
     load_page (spte);
   else
