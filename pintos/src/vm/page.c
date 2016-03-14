@@ -68,11 +68,11 @@ load_page (struct suppl_pte *spte)
     case FILE:
       success = load_page_file (spte);
       break;
-    //case MMF:
+    case MMF:
     case MMF | SWAP:
       success = load_page_mmf (spte);
       break;
-    //case FILE | SWAP:
+    case FILE | SWAP:
     case SWAP:
       success = load_page_swap (spte);
       break;
@@ -87,7 +87,6 @@ load_page (struct suppl_pte *spte)
 static bool
 load_page_file (struct suppl_pte *spte)
 {
-  struct thread *cur = thread_current ();
   
   file_seek (spte->data.file_page.file, spte->data.file_page.ofs);
 
@@ -109,7 +108,7 @@ load_page_file (struct suppl_pte *spte)
 	  spte->data.file_page.zero_bytes);
   
   /* Add the page to the process's address space. */
-  if (!pagedir_set_page (cur->pagedir, spte->uvaddr, kpage,
+  if (!pagedir_set_page (thread_current ()->pagedir, spte->uvaddr, kpage,
 			 spte->data.file_page.writable))
     {
       vm_free_frame (kpage);
@@ -125,7 +124,6 @@ load_page_file (struct suppl_pte *spte)
 static bool
 load_page_mmf (struct suppl_pte *spte)
 {
-  struct thread *cur = thread_current ();
 
   file_seek (spte->data.mmf_page.file, spte->data.mmf_page.ofs);
 
@@ -146,7 +144,7 @@ load_page_mmf (struct suppl_pte *spte)
 	  PGSIZE - spte->data.mmf_page.read_bytes);
 
   /* Add the page to the process's address space. */
-  if (!pagedir_set_page (cur->pagedir, spte->uvaddr, kpage, true)) 
+  if (!pagedir_set_page (thread_current ()->pagedir, spte->uvaddr, kpage, true))
     {
       vm_free_frame (kpage);
       return false; 
@@ -163,6 +161,7 @@ load_page_mmf (struct suppl_pte *spte)
 static bool
 load_page_swap (struct suppl_pte *spte)
 {
+  
   /* Get a page of memory. */
   uint8_t *kpage = vm_allocate_frame (PAL_USER);
   if (kpage == NULL)
