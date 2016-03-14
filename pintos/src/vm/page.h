@@ -9,9 +9,9 @@
 #include "lib/kernel/hash.h"
 #include "filesys/file.h"
 
-int SWAP = 1;
-int FILE = 2;
-int MMF = 3;
+#define SWAP  1
+#define FILE  2
+#define MMF 3
 
 /* Data Definition */
 

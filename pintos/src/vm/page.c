@@ -63,22 +63,14 @@ bool
 load_page (struct suppl_pte *spte)
 {
   bool success = false;
-  switch (spte->type)
-    {
-    case FILE:
+  int type = spte->type;
+  if (type == FILE) {
       success = load_page_file (spte);
-      break;
-    case MMF:
-    case MMF | SWAP:
+  } else if (type == MMF || type == MMF | SWAP) {
       success = load_page_mmf (spte);
-      break;
-    case FILE | SWAP:
-    case SWAP:
+  } else if (type == SWAP || type == FILE | SWAP) {
       success = load_page_swap (spte);
-      break;
-    default:
-      break;
-    }
+  }
   return success;
 }
 
