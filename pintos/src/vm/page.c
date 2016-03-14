@@ -73,8 +73,8 @@ load_page (struct suppl_pte *spte)
     //case SWAP:
       success = load_page_mmf (spte);
       break;
-    case FILE:
-    //case SWAP:
+    //case FILE:
+    case SWAP:
    // case SWAP:
       success = load_page_swap (spte);
       break;
