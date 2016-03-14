@@ -144,7 +144,7 @@ struct thread
     struct file *exec_file;
 
     /* supplemental page table, which stores as hash table */
-    struct hash suppl_page_table;
+    struct hash supply_page_table;
     
     /* Memory Maped Files table */
     mapid_t mapid_allocator;
