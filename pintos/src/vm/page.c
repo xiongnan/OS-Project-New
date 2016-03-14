@@ -69,10 +69,12 @@ load_page (struct suppl_pte *spte)
       success = load_page_file (spte);
       break;
     //case MMF:
-    case MMF | SWAP:
+    case MMF:
+    case SWAP:
       success = load_page_mmf (spte);
       break;
-    case FILE | SWAP:
+    case FILE:
+    case SWAP:
    // case SWAP:
       success = load_page_swap (spte);
       break;
