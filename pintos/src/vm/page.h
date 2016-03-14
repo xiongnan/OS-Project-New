@@ -16,21 +16,21 @@
 
 //union spte_data
 //{
-  struct
+  struct file_page
   {
     struct file * file;
     off_t ofs;
     uint32_t read_bytes;
     uint32_t zero_bytes;
     bool writable;
-  } file_page;
+  };
 
-  struct 
+  struct mmf_page
   {
     struct file *file;
     off_t ofs;
     uint32_t read_bytes;
-  } mmf_page;
+  };
 //};
 
 /* supplemental page table entry */
@@ -39,8 +39,8 @@ struct supply_pte
   void *uvaddr;   //user virtual address as the unique identifier of a page
   int type; // 1 -> SWAP, 2 -> FILE, 3 -> MMF
   //union supply_pte_data data;
-  struct file_page;
-  struct mmf_page;
+  struct file_page file;
+  struct mmf_page mmf;
   
   bool is_loaded;
 

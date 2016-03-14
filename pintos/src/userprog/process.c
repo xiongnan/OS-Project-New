@@ -854,11 +854,11 @@ mmfiles_free_entry (struct mmfile* mmf_ptr)
 	    {
 	      /* write back to disk */
 	      lock_acquire (&fs_lock);
-	      file_seek (spte_ptr->mmf_page.file,
-			 spte_ptr->mmf_page.ofs);
-	      file_write (spte_ptr->mmf_page.file,
+	      file_seek (spte_ptr->mmf.file,
+			 spte_ptr->mmf.ofs);
+	      file_write (spte_ptr->mmf.file,
 			  spte_ptr->uvaddr,
-			  spte_ptr->mmf_page.read_bytes);
+			  spte_ptr->mmf.read_bytes);
 	      lock_release (&fs_lock);
 	    }
 	  free (spte_ptr);
