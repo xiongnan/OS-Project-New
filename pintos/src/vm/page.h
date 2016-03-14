@@ -10,8 +10,8 @@
 #include "filesys/file.h"
 
 int SWAP = 1;
-int FILE = 2
-int MMF = 3
+int FILE = 2;
+int MMF = 3;
 
 /* Data Definition */
 
