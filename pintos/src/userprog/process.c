@@ -21,6 +21,7 @@
 #include "devices/timer.h"
 #include "userprog/syscall.h"
 #include "vm/frame.h"
+#include "vm/page.h"
 
 struct mmfile
 {
@@ -854,7 +855,7 @@ mmfiles_free_entry (struct mmfile* mmf_ptr)
 	      /* write back to disk */
 	      lock_acquire (&fs_lock);
 	      file_seek (spte_ptr->mmf_page.file,
-			 spte_ptr->data.mmf_page.ofs);
+			 spte_ptr->mmf_page.ofs);
 	      file_write (spte_ptr->mmf_page.file,
 			  spte_ptr->uvaddr,
 			  spte_ptr->mmf_page.read_bytes);
