@@ -16,12 +16,12 @@
 /* Data Definition */
 
 /* The lowest bit indicate whether the page has been swapped out */
-enum suppl_pte_type
-{
-  SWAP = 001,
-  FILE = 002,
-  MMF  = 004
-};
+//enum suppl_pte_type
+//{
+//  SWAP = 001,
+//  FILE = 002,
+//  MMF  = 004
+//};
 
 union suppl_pte_data
 {
