@@ -9,6 +9,9 @@
 #include "lib/kernel/hash.h"
 #include "filesys/file.h"
 
+#define SWAP = 1
+#define FILE = 2
+#Define MMF = 3
 
 /* Data Definition */
 
@@ -43,7 +46,7 @@ union suppl_pte_data
 struct suppl_pte
 {
   void *uvaddr;   //user virtual address as the unique identifier of a page
-  enum suppl_pte_type type;
+  int type; // 1 -> SWAP, 2 -> FILE, 3 -> MMF
   union suppl_pte_data data;
   bool is_loaded;
 
